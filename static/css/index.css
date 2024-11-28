@@ -1,0 +1,29 @@
+.landing-main {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.landing-header {
+    font-size: 5rem;
+}
+
+.landing-header-description span:first-child {
+    color: #F44C4C;
+}
+
+.landing-header-description span:last-child {
+    color: #2E6EE5;
+}
+
+#register-btn {
+    background-color: black;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    align-self: flex-start;
+}

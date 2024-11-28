@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    {% block stylesheets %}
+        {{ super() }}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+        {% if module %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/' + module + '.css') }}"></link>
+        {% endif %}
+    {% endblock stylesheets %}
+
+    {% block scripts %}
+        {{ super() }}
+        <script src="{{ url_for('static', filename='js/main.js') }}" type="module" defer></script>
+        {% if module %}
+            <script src="{{ url_for('static', filename='js/' + module + '.js') }}" type="module" defer></script>
+        {% endif %}
+    {% endblock scripts %}
+{% endblock head %}
+
+{% block body %}
+    <main class="wrapper main-wrapper" id="main-wrapper" data-module="{{ module }}">
+        {% if module != "professional-request-pending" and module != "professional-service-not-found" and module != "professional-request-declined" and module != "account-blocked" %}
+            {% include "lhs-bar.html" %}
+        {% endif %}
+        <article class="content-wrapper" id="content-wrapper">
+            {% if module == "dashboard" %}
+                {% include "dashboard.html" %}
+            {% elif module == "services" %}
+                {% include "services.html" %}
+            {% elif module == "service-requests" %}
+                {% include "service-requests.html" %}
+            {% elif module == "professional-requests" %}
+                {% include "professional-requests.html" %}
+            {% elif module == "admin-panel" %}
+                {% include "admin-panel.html" %}
+            {% elif module == "professional-request-pending" %}
+                {% include "professional-request-pending.html" %}
+            {% elif module == "professional-request-declined" %}
+                {% include "professional-request-declined.html" %}
+            {% elif module == "account-blocked" %}
+                {% include "account-blocked.html" %}
+            {% elif module == "professional-service-not-found" %}
+                {% include "professional-service-not-found.html" %}
+            {% elif module == "account" %}
+                {% include "account.html" %}
+            {% elif module == "reviews" %}
+                {% include "reviews.html" %}
+            {% else %}
+            {% endif %}
+        </article>
+    </main>
+    <script>
+        window.__config__ = {{ config|tojson }}
+    </script>
+{% endblock body %}

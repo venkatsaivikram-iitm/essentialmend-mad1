@@ -1,0 +1,403 @@
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active text-black" id="nav-all-service-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-all-service-requests-panel" type="button" role="tab" aria-controls="nav-all-service-requests-panel" aria-selected="true">All Requests</button>
+    <button class="nav-link text-black" id="nav-pending-service-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-pending-service-requests-panel" type="button" role="tab" aria-controls="nav-pending-service-requests-panel" aria-selected="false">Pending</button>
+    <button class="nav-link text-black" id="nav-inprogress-service-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-inprogress-service-requests-panel" type="button" role="tab" aria-controls="nav-inprogress-service-requests-panel" aria-selected="false">InProgress</button>
+    <button class="nav-link text-black" id="nav-cancelled-service-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-cancelled-service-requests-panel" type="button" role="tab" aria-controls="nav-cancelled-service-requests-panel" aria-selected="false">Cancelled</button>
+    <button class="nav-link text-black" id="nav-completed-service-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-completed-service-requests-panel" type="button" role="tab" aria-controls="nav-completed-service-requests-panel" aria-selected="false">Completed</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-all-service-requests-panel" role="tabpanel" aria-labelledby="nav-all-service-requests-tab">
+    <p id="all-service-request-not-found-text" class="d-none">No service requests found!</p>
+    <div class="pt-2 pb-2 d-flex flex-column gap-2 align-items-start h-100 overflow-hidden">
+      {% for serviceRequest in serviceRequests %}
+        {% set colorclass="" %}
+        {% if serviceRequest["isInProgress"] %}
+          {% set colorclass="bg-primary text-white" %}
+        {% endif %}
+        {% if serviceRequest["isCompleted"] %}
+          {% set colorclass="bg-success text-white" %}
+        {% endif %}
+        {% if serviceRequest["isCancelled"] %}
+          {% set colorclass="bg-danger text-white" %}
+        {% endif %}
+        <div class="p-2 rounded d-flex gap-4 align-items-center w-100 service-request-item {{colorclass}}" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-info-modal">
+          <div class="item-icon">
+            <i class="bi bi-hammer"></i>
+          </div>
+          <div class="flex-grow-1">
+            {% if config["userInfo"]["isAdmin"] %}
+              <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}}) | <span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+              <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+              <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+              {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+              <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+              {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+              {% endif %}
+            {% endif %}
+            {% if config["userInfo"]["isProfessional"] %}
+              <p class="m-0"><span class="fw-bold"><span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+              <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+              <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+              {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+              <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+              {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+              {% endif %}
+            {% endif %}
+            {% if config["userInfo"]["isUser"] %}
+              <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}})</p>
+              <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+              <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+              {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+              <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+              {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div class="d-flex gap-2">
+            {% if serviceRequest["isPending"] or serviceRequest["isInProgress"] %}
+              {% if (config["userInfo"]["isUser"] and serviceRequest["isInProgress"]) or (config["userInfo"]["isProfessional"] and serviceRequest["isPending"]) %}
+                <button class="btn btn-success service-request-accept-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-accept-modal">
+                  <i class="bi bi-check-square"></i>
+                </button>
+              {% endif %}
+              <button class="btn btn-danger service-request-cancel-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-cancel-modal">
+                <i class="bi bi-x-square"></i>
+              </button>
+            {% endif %}
+          </div>
+          {% if (config["userInfo"]["isUser"] or config["userInfo"]["isProfessional"]) and (serviceRequest["isCancelled"] or serviceRequest["isCompleted"]) %}
+            <div class="d-flex gap-2">
+              <button class="btn btn-dark service-request-review-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-review-modal">Review</button>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% if not serviceRequests | hasServiceRequests("all") %}
+        <p class="text-center mt-4">No service requests yet!</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-pending-service-requests-panel" role="tabpanel" aria-labelledby="nav-pending-service-requests-tab">
+    <p id="pending-service-request-not-found-text" class="d-none">No pending service requests found!</p>
+    <div class="pt-2 pb-2 d-flex flex-column gap-2 h-100 align-items-start overflow-hidden">
+      {% for serviceRequest in serviceRequests %}
+        {% if serviceRequest["isPending"] %}
+          <div class="p-2 rounded d-flex gap-4 align-items-center w-100 service-request-item" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-info-modal">
+            <div class="item-icon">
+              <i class="bi bi-hammer"></i>
+            </div>
+            <div class="flex-grow-1">
+              {% if config["userInfo"]["isAdmin"] %}
+                <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}}) | <span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+              {% if config["userInfo"]["isProfessional"] %}
+                <p class="m-0"><span class="fw-bold"><span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+              {% if config["userInfo"]["isUser"] %}
+                <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+            </div>
+            <div class="d-flex gap-2">
+              {% if config["userInfo"]["isProfessional"] %}
+                <button class="btn btn-success service-request-accept-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-accept-modal">
+                  <i class="bi bi-check-square"></i>
+                </button>
+              {% endif %}
+              <button class="btn btn-danger service-request-cancel-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-cancel-modal">
+                <i class="bi bi-x-square"></i>
+              </button>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+      {% if not serviceRequests | hasServiceRequests("isPending") %}
+        <p class="text-center mt-4">No pending service requests yet!</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-inprogress-service-requests-panel" role="tabpanel" aria-labelledby="nav-declined-service-requests-tab">
+    <p id="inprogress-service-request-not-found-text" class="d-none">No inprogress service requests found!</p>
+    <div class="pt-2 pb-2 d-flex flex-column gap-2 h-100 align-items-start overflow-hidden">
+      {% for serviceRequest in serviceRequests %}
+        {% if serviceRequest["isInProgress"] %}
+          <div class="p-2 rounded d-flex gap-4 bg-primary text-white align-items-center w-100 service-request-item" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-info-modal">
+            <div class="item-icon">
+              <i class="bi bi-hammer"></i>
+            </div>
+            <div class="flex-grow-1">
+              {% if config["userInfo"]["isAdmin"] %}
+                <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}}) | <span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+              {% if config["userInfo"]["isProfessional"] %}
+                <p class="m-0"><span class="fw-bold"><span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+              {% if config["userInfo"]["isUser"] %}
+                <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+            </div>
+            <div class="d-flex gap-2">
+              {% if config["userInfo"]["isUser"] %}
+                <button class="btn btn-success service-request-accept-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-accept-modal">
+                  <i class="bi bi-check-square"></i>
+                </button>
+              {% endif %}
+              <button class="btn btn-danger service-request-cancel-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-cancel-modal">
+                <i class="bi bi-x-square"></i>
+              </button>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+      {% if not serviceRequests | hasServiceRequests("isInProgress") %}
+        <p class="text-center mt-4">No inprogress service requests yet!</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-cancelled-service-requests-panel" role="tabpanel" aria-labelledby="nav-cancelled-service-requests-tab">
+    <p id="cancelled-service-request-not-found-text" class="d-none">No cancelled service requests found!</p>
+    <div class="pt-2 pb-2 d-flex flex-column gap-2 h-100 align-items-start overflow-hidden">
+      {% for serviceRequest in serviceRequests %}
+        {% if serviceRequest["isCancelled"] %}
+          <div class="p-2 rounded d-flex bg-danger text-white gap-4 align-items-center w-100 service-request-item" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-info-modal">
+            <div class="item-icon">
+              <i class="bi bi-hammer"></i>
+            </div>
+            <div class="flex-grow-1">
+              {% if config["userInfo"]["isAdmin"] %}
+                <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}}) | <span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+              {% if config["userInfo"]["isProfessional"] %}
+                <p class="m-0"><span class="fw-bold"><span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+              {% if config["userInfo"]["isUser"] %}
+                <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+            </div>
+            {% if config["userInfo"]["isUser"] or config["userInfo"]["isProfessional"] %}
+              <div class="d-flex gap-2">
+                <button class="btn btn-dark service-request-review-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-review-modal">Review</button>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+      {% if not serviceRequests | hasServiceRequests("isCancelled") %}
+        <p class="text-center mt-4">No cancelled service requests yet!</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-completed-service-requests-panel" role="tabpanel" aria-labelledby="nav-completed-service-requests-tab">
+    <p id="completed-service-request-not-found-text" class="d-none">No completed service requests found!</p>
+    <div class="pt-2 pb-2 d-flex flex-column gap-2 h-100 align-items-start overflow-hidden">
+      {% for serviceRequest in serviceRequests %}
+        {% if serviceRequest["isCompleted"] %}
+          <div class="p-2 rounded bg-success text-white d-flex gap-4 align-items-center w-100 service-request-item" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-info-modal">
+            <div class="item-icon">
+              <i class="bi bi-hammer"></i>
+            </div>
+            <div class="flex-grow-1">
+              {% if config["userInfo"]["isAdmin"] %}
+                <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}}) | <span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+              {% if config["userInfo"]["isProfessional"] %}
+                <p class="m-0"><span class="fw-bold"><span class="fw-bold">User: </span>{{serviceRequest["userInfo"]["name"]}} ({{serviceRequest["userInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+              {% if config["userInfo"]["isUser"] %}
+                <p class="m-0"><span class="fw-bold">Service: </span>{{serviceRequest["serviceInfo"]["name"]}} | <span class="fw-bold">Professional: </span>{{serviceRequest["professionalInfo"]["name"]}} ({{serviceRequest["professionalInfo"]["email"]}})</p>
+                <p class="m-0"><span class="fw-bold">Status: </span>{{serviceRequest["status"]}}</p>
+                <p class="m-0"><span class="fw-bold">Status Info: </span>{{serviceRequest["statusInfo"]}}</p>
+                {% set createdAt = serviceRequest["createdAt"] | to_datetime %}
+                <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% if serviceRequest["isCompleted"] or serviceRequest["isCancelled"] %}
+                  {% set closedAt = serviceRequest["closedAt"] | to_datetime %}
+                  <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+              {% endif %}
+            </div>
+            {% if config["userInfo"]["isUser"] or config["userInfo"]["isProfessional"] %}
+              <div class="d-flex gap-2">
+                <button class="btn btn-dark service-request-review-btn" data-reqid="{{serviceRequest.reqid}}" data-bs-toggle="modal" data-bs-target="#service-request-review-modal">Review</button>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+      {% if not serviceRequests | hasServiceRequests("isCompleted") %}
+        <p class="text-center mt-4">No completed requests yet!</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
+<!-- service request info modal -->
+<div class="modal fade" id="service-request-info-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Service Request Info</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="service-request-info-close-btn"></button>
+          </div>
+          <div class="modal-body" id="service-request-info-modal-body"></div>
+      </div>
+  </div>
+</div>
+
+
+<!-- service request accept modal -->
+<div class="modal fade" id="service-request-accept-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ 'Complete Service Request' if config["userInfo"]["isUser"] else 'Accept Service Request' }}</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="service-request-accept-close-btn"></button>
+          </div>
+          <div class="modal-body" id="service-request-accept-modal-body"></div>
+          <div class="modal-footer" id="service-request-accept-modal-footer">
+              <button type="button" class="btn btn-success" id="service-request-accept-btn">Confirm</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<!-- service request cancel modal -->
+<div class="modal fade" id="service-request-cancel-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Cancel Service Request</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="service-request-cancel-close-btn"></button>
+          </div>
+          <div class="modal-body" id="service-request-cancel-modal-body"></div>
+          <div class="modal-footer" id="service-request-cancel-modal-footer">
+              <button type="button" class="btn btn-danger" id="service-request-cancel-btn">Cancel</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<!-- service request review modal -->
+<div class="modal fade" id="service-request-review-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Service Request Review</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="service-request-review-close-btn"></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex flex-column gap-2">
+                <textarea class="form-control" id="service-request-review-text" placeholder="Review Text"></textarea>
+                <input class="form" type="number" id="service-request-review-rating" placeholder="Review Rating" />
+              </div>
+              <div id="service-request-review-modal-body"></div>
+            </div>
+          </div>
+          <div class="modal-footer" id="service-request-review-modal-footer">
+              <button type="button" class="btn btn-dark" id="service-request-review-btn">Post</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  window.serviceRequests = {{ serviceRequests|tojson }}
+</script>

@@ -1,0 +1,75 @@
+<aside class="lhs-bar lhs-bar-wrapper" id="lhs-bar">
+    <section class="wrapper lhs-bar-top-items-wrapper">
+        <a class="d-flex gap-2 justify-content-center align-items-center text-decoration-none p-1 rounded" id="bookshelf-logo">
+            <img src="{{ url_for('static', filename='assets/essential-mend-light.svg') }}" />
+            <h1 class="h4 m-0 p-0 text-white">EssentialMend</h1>
+        </a>
+        <div class="mt-2 line-separator"></div>
+        <a 
+            class="w-100 mt-2 d-flex gap-2 align-items-center text-decoration-none p-1 rounded lhs-bar-item {{ 'lhs-bar-item--selected' if module == 'dashboard' }}" 
+            id="bookshelf-dashboard" 
+            title="Dashboard" 
+            data-module="dashboard"
+            href="/dashboard"
+        >
+            <img class="" src="{{ url_for('static', filename='assets/dashboard-light.svg') if module == 'dashboard' else url_for('static', filename='assets/dashboard-dark.svg') }}" />
+            <h2 class="h5 m-0 p-0 text-black {{ 'text-white' if module == 'dashboard' }}">Dashboard</h2>
+        </a>
+        {% if config["userInfo"]["isUser"] %}
+            <a 
+                class="w-100 d-flex gap-2 align-items-center text-decoration-none p-1 rounded lhs-bar-item {{ 'lhs-bar-item--selected' if module == 'services' }}" 
+                id="em-services" 
+                title="Services" 
+                data-module="services"
+                href="/services"
+            >
+                <img src="{{ url_for('static', filename='assets/service-light.svg') if module == 'services' else url_for('static', filename='assets/service-dark.svg') }}" />
+                <h2 class="h5 m-0 p-0 text-black {{ 'text-white' if module == 'services' }}">Services</h2>
+            </a>
+        {% endif %}
+        <a 
+            class="w-100 d-flex gap-2 align-items-center text-decoration-none p-1 rounded lhs-bar-item {{ 'lhs-bar-item--selected' if module == 'service-requests' }}" 
+            id="em-service-requests" 
+            title="Service Requests" 
+            data-module="service-requests"
+            href="/service-requests"
+        >
+            <img src="{{ url_for('static', filename='assets/service-request-light.svg') if module == 'service-requests' else url_for('static', filename='assets/service-request-dark.svg') }}" />
+            <h2 class="h5 m-0 p-0 text-black text-truncate {{ 'text-white' if module == 'service-requests' }}">Service Requests</h2>
+        </a>
+        <a 
+            class="w-100 d-flex gap-2 align-items-center text-decoration-none p-1 rounded lhs-bar-item {{ 'lhs-bar-item--selected' if module == 'reviews' }}" 
+            id="em-reviews" 
+            title="Revews" 
+            data-module="reviews"
+            href="/reviews"
+        >
+            <img src="{{ url_for('static', filename='assets/reviews-light.svg') if module == 'reviews' else url_for('static', filename='assets/reviews-dark.svg') }}" />
+            <h2 class="h5 m-0 p-0 text-black text-truncate {{ 'text-white' if module == 'reviews' }}">Reviews</h2>
+        </a>
+        {% if config["userInfo"]["isAdmin"] %}
+            <a 
+                class="w-100 d-flex gap-2 align-items-center text-decoration-none p-1 rounded lhs-bar-item {{ 'lhs-bar-item--selected' if module == 'admin-panel' }}" 
+                id="em-admin-panel" 
+                title="Admin Panel" 
+                data-module="admin-panel"
+                href="/admin-panel"
+            >
+                <img src="{{ url_for('static', filename='assets/admin-panel-light.svg') if module == 'admin-panel' else url_for('static', filename='assets/admin-panel-dark.svg') }}" />
+                <h2 class="h5 m-0 p-0 text-black text-truncate {{ 'text-white' if module == 'admin-panel' }}">Admin Panel</h2>
+            </a>
+        {% endif %}
+    </section>
+    <section class="wrapper lhs-bar-bottom-items-wrapper">
+        <a 
+            class="w-100 d-flex gap-2 align-items-center text-decoration-none p-1 rounded lhs-bar-item {{ 'lhs-bar-item--selected' if module == 'account' }}" 
+            id="em-account" 
+            title="Account" 
+            data-module="account"
+            href="/account"
+        >
+            <img src="{{ url_for('static', filename='assets/account-light.svg') if module == 'account' else url_for('static', filename='assets/account-dark.svg') }}" />
+            <h2 class="h5 m-0 p-0 text-black {{ 'text-white' if module == 'account' }}">Account</h2>
+        </a>
+    </section>
+</aside>

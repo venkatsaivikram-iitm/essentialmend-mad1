@@ -1,0 +1,50 @@
+<section class="d-flex justify-content-between align-items-center">
+    <h2 class="fs-1 m-0">EXPLORE</h2>
+    <div class="input-group mr-sm-2" id="book-search-wrapper">
+        <div class="input-group-prepend">
+            <div class="input-group-text">
+                <i class="bi bi-search"></i>
+            </div>
+        </div>
+        <input type="text" class="form-control" id="book-search-input" placeholder="Search a book">
+    </div>
+</section>
+<hr />
+<section class="explore-main-wrapper">
+    <div id="explore-books-wrapper">
+        {% for book in library %}
+            <div class="explore-book-item" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#add-modal">
+                <div class="book-item-icon-wrapper">
+                    <i class="bi bi-book-half book-item-icon"></i>
+                    {% if not book.isRequested %}
+                        <button type="button" class="btn book-add-btn btn-success" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#add-modal">
+                            <i class="bi bi-bookmark-plus-fill"></i>
+                        </button>
+                    {% endif %}
+                </div>
+                <hr style="width:100%;margin:0;border-color:black" />
+                <div class="book-item-info-wrapper">
+                    <h4>{{book.file_name}}</h4>
+                    <p>{{book.uploaded_on_str}}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+<div class="modal fade" id="add-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Book Info</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="request-modal-close-btn"></button>
+            </div>
+            <div class="modal-body" id="add-modal-body"></div>
+            <div class="modal-footer" id="add-modal-footer">
+                <button type="button" class="btn btn-dark" id="request-btn">Request Access</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.library = {{ library|tojson }} 
+</script>

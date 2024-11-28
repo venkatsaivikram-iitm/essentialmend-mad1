@@ -1,0 +1,73 @@
+<section class="dahsboard-main-wrapper d-flex flex-column p-3 w-100 h-100 gap-4 text-white">
+    <div class="d-flex w-100 flex-grow-1 gap-4">
+        <div class="h-100 flex-grow-1 bg-black rounded overflow-auto">
+            <canvas id="chart1" class="w-100 h-100 p-2"></canvas>
+        </div>
+        <div class="h-100 flex-grow-1 bg-black rounded">
+            <canvas id="chart2" class="w-100 h-100 p-2"></canvas>
+        </div>
+    </div>
+    <div class="d-flex w-100 flex-grow-1 gap-4">
+        {% if config["userInfo"]["isUser"] or config["userInfo"]["isProfessional"] %}
+            <div class="h-100 flex-grow-1 bg-black rounded p-2">
+                <p class="fw-bold text-decoration-underline">Current Service Request</p>
+                {% if dashboardData["currentServiceRequest"] %}
+                    {% if config["userInfo"]["isUser"] %}
+                        <p class="m-0"><span class="fw-bold">Professional: </span>{{dashboardData["currentServiceRequest"]["professionalInfo"]["name"] if dashboardData["currentServiceRequest"]["professionalInfo"] else "-"}}</p>
+                        <p class="m-0"><span class="fw-bold">Professional Email: </span>{{dashboardData["currentServiceRequest"]["professionalInfo"]["email"] if dashboardData["currentServiceRequest"]["professionalInfo"] else "-"}}</p>
+                    {% endif %}
+                    {% if config["userInfo"]["isProfessional"] %}
+                        <p class="m-0"><span class="fw-bold">User: </span>{{dashboardData["currentServiceRequest"]["userInfo"]["name"] if dashboardData["currentServiceRequest"]["userInfo"] else "-"}}</p>
+                        <p class="m-0"><span class="fw-bold">User Email: </span>{{dashboardData["currentServiceRequest"]["userInfo"]["email"] if dashboardData["currentServiceRequest"]["userInfo"] else "-"}}</p>
+                    {% endif %}
+                    <p class="m-0"><span class="fw-bold">Service: </span>{{dashboardData["currentServiceRequest"]["serviceInfo"]["name"] if dashboardData["lastServiceRequest"]["serviceInfo"] else "-"}}</p>
+                    <p class="m-0"><span class="fw-bold">Status: </span>{{dashboardData["currentServiceRequest"]["status"]}}</p>
+                    <p class="m-0"><span class="fw-bold">Status Info: </span>{{dashboardData["currentServiceRequest"]["statusInfo"]}}</p>
+                    {% set createdAt = dashboardData["currentServiceRequest"]["createdAt"] | to_datetime %}
+                    <p class="m-0"><span class="fw-bold">Price: </span>{{dashboardData["currentServiceRequest"]["professionalInfo"]["price"] if dashboardData["currentServiceRequest"]["professionalInfo"] else "-"}} Rs</p>
+                    <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                {% endif %}
+                {% if not dashboardData["currentServiceRequest"] %}
+                    <p>No current Service Request on going!!</p>
+                {% endif %}
+            </div>
+            <div class="h-100 flex-grow-1 bg-black rounded p-2">
+                <p class="fw-bold text-decoration-underline">Last Service Request</p>
+                {% if dashboardData["lastServiceRequest"] %}
+                    {% if config["userInfo"]["isUser"] %}
+                        <p class="m-0"><span class="fw-bold">Professional: </span>{{dashboardData["lastServiceRequest"]["professionalInfo"]["name"] if dashboardData["lastServiceRequest"]["professionalInfo"] else "-"}}</p>
+                        <p class="m-0"><span class="fw-bold">Professional Email: </span>{{dashboardData["lastServiceRequest"]["professionalInfo"]["email"] if dashboardData["lastServiceRequest"]["professionalInfo"] else "-"}}</p>
+                    {% endif %}
+                    {% if config["userInfo"]["isProfessional"] %}
+                        <p class="m-0"><span class="fw-bold">User: </span>{{dashboardData["lastServiceRequest"]["userInfo"]["name"] if dashboardData["lastServiceRequest"]["userInfo"] else "-"}}</p>
+                        <p class="m-0"><span class="fw-bold">User Email: </span>{{dashboardData["lastServiceRequest"]["userInfo"]["email"] if dashboardData["lastServiceRequest"]["userInfo"] else "-"}}</p>
+                    {% endif %}
+                    <p class="m-0"><span class="fw-bold">Service: </span>{{dashboardData["lastServiceRequest"]["serviceInfo"]["name"] if dashboardData["lastServiceRequest"]["serviceInfo"] else "-"}}</p>
+                    <p class="m-0"><span class="fw-bold">Status: </span>{{dashboardData["lastServiceRequest"]["status"]}}</p>
+                    <p class="m-0"><span class="fw-bold">Status Info: </span>{{dashboardData["lastServiceRequest"]["statusInfo"]}}</p>
+                    {% set createdAt = dashboardData["lastServiceRequest"]["createdAt"] | to_datetime %}
+                    {% set closedAt = dashboardData["lastServiceRequest"]["closedAt"] | to_datetime %}
+                    <p class="m-0"><span class="fw-bold">Price: </span>{{dashboardData["lastServiceRequest"]["professionalInfo"]["price"] if dashboardData["lastServiceRequest"]["professionalInfo"] else "-"}} Rs</p>
+                    <p class="m-0"><span class="fw-bold">Created At: </span>{{createdAt}}</p>
+                    <p class="m-0"><span class="fw-bold">Closed At: </span>{{closedAt}}</p>
+                {% endif %}
+                {% if not dashboardData["lastServiceRequest"] %}
+                    <p>No Last Service Request yet!!</p>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="h-100 flex-grow-1 bg-black rounded">
+                <canvas id="chart3" class="w-100 h-100 p-2"></canvas>
+            </div>
+            <div class="h-100 flex-grow-1 bg-black rounded">
+                <canvas id="chart4" class="w-100 h-100 p-2"></canvas>
+            </div>
+        {% endif %}
+        
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.dashboardData = {{ dashboardData|tojson }}
+</script>

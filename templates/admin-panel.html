@@ -1,0 +1,298 @@
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active text-black" id="nav-services-tab" data-bs-toggle="tab" data-bs-target="#nav-services" type="button" role="tab" aria-controls="nav-services" aria-selected="true">Services</button>
+    <button class="nav-link text-black" id="nav-professionals-tab" data-bs-toggle="tab" data-bs-target="#nav-professionals" type="button" role="tab" aria-controls="nav-professionals" aria-selected="false">Professionals</button>
+    <button class="nav-link text-black" id="nav-users-tab" data-bs-toggle="tab" data-bs-target="#nav-users" type="button" role="tab" aria-controls="nav-users" aria-selected="false">Users</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-services" role="tabpanel" aria-labelledby="nav-services-tab">
+    <div class="pt-2 pb-2 d-flex flex-column h-100 overflow-hidden">
+      <div class="d-flex justify-content-between align-items-center">
+          <div class="input-group mr-sm-2" id="service-search-wrapper">
+              <div class="input-group-prepend">
+                  <div class="input-group-text">
+                      <i class="bi bi-search"></i>
+                  </div>
+              </div>
+              <input type="text" class="form-control" id="service-search-input" data-type="service" placeholder="Search Services">
+          </div>
+          <button class="btn btn-dark" id="add-service-btn" data-type="service" data-action="add" data-bs-toggle="modal" data-bs-target="#service-add-modal">Add Service</button>
+      </div>
+      <hr />
+      <div class="d-flex flex-grow-1 flex-column gap-2 h-100 overflow-auto">
+        {% for service in services %}
+              <div class="d-flex gap-4 px-4 rounded pt-2 pb-2 service-item" data-type="service" data-action="info" data-value="{{service.name}}" data-sid="{{service.sid}}" data-bs-toggle="modal" data-bs-target="#service-info-modal">
+                  <div class="item-icon">
+                    <i class="bi bi-tools service-item-icon"></i>
+                  </div>
+                  <div class="d-flex flex-grow-1 flex-column">
+                    <h4>{{service.name}}</h4>
+                    <p class="text-truncate m-0"><span class="fw-bold">Description: </span>{{service.description}}</p>
+                    <p class="fs-6 m-0"><span class="fw-bold">Price: </span>{{service.price}} Rs</p>
+                  </div>
+                  <div class="align-self-center">
+                    <!-- <button class="btn btn-dark service-edit-modal-btn" data-type="service" data-action="edit" data-sid="{{service.sid}}" data-bs-toggle="modal" data-bs-target="#service-edit-modal">
+                      <i class="fs-5 bi bi-pencil-square"></i>
+                    </button> -->
+                    <button class="fs-5 btn btn-danger service-delete-modal-btn" data-type="service" data-action="delete" data-sid="{{service.sid}}" data-bs-toggle="modal" data-bs-target="#service-delete-modal">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-professionals" role="tabpanel" aria-labelledby="nav-professionals-tab">
+    <div class="p-2 d-flex flex-column h-100 overflow-hidden">
+      <div class="d-flex justify-content-between align-items-center">
+          <div class="input-group mr-sm-2" id="professional-search-wrapper">
+              <div class="input-group-prepend">
+                  <div class="input-group-text">
+                      <i class="bi bi-search"></i>
+                  </div>
+              </div>
+              <input type="text" class="form-control" id="professional-search-input" data-type="professional" placeholder="Search Professionals">
+          </div>
+      </div>
+      <hr />
+      <div class="d-flex flex-grow-1 flex-column gap-2 h-100 overflow-auto">
+        {% for professional in professionals %}
+              <div class="d-flex gap-4 px-4 rounded pt-2 pb-2 professional-item" data-action="info" data-type="professional" data-value="{{professional.name}},{{professional.email}}" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-info-modal">
+                  <div class="item-icon">
+                    <i class="bi bi-person-fill-gear service-item-icon"></i>
+                  </div>
+                  <div class="d-flex flex-grow-1 flex-column">
+                    <h4>{{professional.name}} | {{professional.email}} | <span class="fw-normal">{{professional.professionalRequest.status}}</span></h4>
+                    <p class="text-truncate m-0"><span class="fw-bold">Service: </span>{{professional.service.name if professional.service else "Service unavailable"}} | <span class="fw-bold">Description: </span> {{professional.description}}</p>
+                    <p class="m-0"><span class="fw-bold">Location: </span>{{professional.location}} | <span class="fw-bold">Pincode: </span>{{professional.pincode}}</p>
+                    <p class="fs-6 m-0"><span class="fw-bold">Rating: </span>{{professional.rating or 0}} &#9733; | <span class="fw-bold">Duration: </span>{{professional.duration}} Hrs | <span class="fw-bold">Price: </span>{{professional.price}} Rs</p>
+                  </div>
+                  <div class="align-self-center">
+                    {% if professional.isPending and professional.service %}
+                      <button class="btn btn-dark professional-review-btn" data-uid="{{professional.uid}}" data-type="professional" data-action="review" data-bs-toggle="modal" data-bs-target="#professional-review-modal">
+                        <i class="bi bi-person-fill-check"></i>
+                        Review Request
+                      </button>
+                    {% else %}
+                    {% endif %}
+                    <button class="fs-5 btn btn-danger professional-delete-modal-btn" data-action="delete" data-type="professional" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-delete-modal">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
+    <div class="p-2 d-flex flex-column h-100 overflow-hidden">
+      <div class="d-flex justify-content-between align-items-center">
+          <div class="input-group mr-sm-2" id="user-search-wrapper">
+              <div class="input-group-prepend">
+                  <div class="input-group-text">
+                      <i class="bi bi-search"></i>
+                  </div>
+              </div>
+              <input type="text" class="form-control" id="user-search-input" data-type="user" placeholder="Search Users">
+          </div>
+      </div>
+      <hr />
+      <div class="d-flex flex-grow-1 flex-column gap-2 h-100 overflow-auto">
+        {% for user in users %}
+              <div class="d-flex gap-4 px-4 rounded pt-2 pb-2 user-item" data-type="user" data-action="info" data-value="{{user.name}},{{user.email}}" data-uid="{{user.uid}}" data-bs-toggle="modal" data-bs-target="#user-info-modal">
+                  <div class="item-icon">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="d-flex flex-grow-1 flex-column">
+                    <h4>{{user.name}} | {{user.email}} | <span class="fw-normal">{{user.status}}</span></h4>
+                    <p class="m-0"><span class="fw-bold">Location: </span>{{user.location}} | <span class="fw-bold">Pincode: </span>{{user.pincode}}</p>
+                  </div>
+                  <div class="align-self-center">
+                    <button class="fs-5 btn btn-danger user-delete-modal-btn" data-type="user" data-action="delete" data-uid="{{user.uid}}" data-bs-toggle="modal" data-bs-target="#user-delete-modal">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- service info modal -->
+<div class="modal fade" id="service-info-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Service Info</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="service-info-modal-close-btn"></button>
+          </div>
+          <div class="modal-body d-flex gap-4">
+            <div class="item-icon align-self-start item-info-icon">
+              <i class="bi bi-tools"></i>
+            </div>
+            <div id="service-info-modal-body"></div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- service add modal -->
+<div class="modal fade" id="service-add-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Service</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="service-add-modal-close-btn"></button>
+          </div>
+          <div class="modal-body" id="service-add-modal-body">
+              <div class="mb-3">
+                  <label for="service-name" class="form-label fw-bold">Name</label>
+                  <input type="text" class="form-control" id="service-name" placeholder="Enter service name">
+              </div>
+              <div class="mb-3">
+                  <label for="service-description" class="form-label fw-bold">Description</label>
+                  <textarea class="form-control" id="service-description" rows="3" placeholder="Enter service description"></textarea>
+              </div>
+              <div class="mb-3">
+                  <label for="service-price" class="form-label fw-bold">Price</label>
+                  <input type="number" class="form-control" id="service-price" placeholder="Enter service price">
+              </div>
+          </div>
+          <div class="modal-footer" id="service-add-modal-footer">
+              <button type="button" class="btn btn-dark" id="service-add-btn">Add</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- service edit modal -->
+<div class="modal fade" id="service-edit-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Service</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="service-edit-modal-close-btn"></button>
+          </div>
+          <div class="modal-body" id="service-edit-modal-body"></div>
+          <div class="modal-footer" id="service-edit-modal-footer">
+              <button type="button" class="btn btn-dark" id="service-edit-btn">Update</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- service delete modal -->
+<div class="modal fade" id="service-delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Service</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="service-delete-modal-close-btn"></button>
+          </div>
+          <div class="modal-body" id="service-delete-modal-body"></div>
+          <div class="modal-footer" id="service-delete-modal-footer">
+              <button type="button" class="btn btn-danger" id="service-delete-btn">Delete</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+<!-- professional info modal -->
+<div class="modal fade" id="professional-info-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Professional Info</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="professional-info-modal-close-btn"></button>
+          </div>
+          <div class="modal-body d-flex gap-4">
+            <div class="item-icon align-self-start item-info-icon">
+              <i class="bi bi-person-fill-gear"></i>
+            </div>
+            <div id="professional-info-modal-body"></div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- professional review modal -->
+<div class="modal fade" id="professional-review-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Review Professional</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="professional-review-modal-close-btn"></button>
+          </div>
+          <div class="modal-body" id="professional-review-modal-body"></div>
+          <div class="modal-footer" id="professional-review-modal-footer">
+              <button type="button" class="btn btn-danger" id="professional-decline-btn">Decline</button>
+              <button type="button" class="btn btn-success" id="professional-approve-btn">Approve</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- professional delete modal -->
+<div class="modal fade" id="professional-delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Professional</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="professional-delete-modal-close-btn"></button>
+          </div>
+          <div class="modal-body" id="professional-delete-modal-body"></div>
+          <div class="modal-footer" id="professional-delete-modal-footer">
+              <button type="button" class="btn btn-dark" id="professional-block-btn">Block</button>
+              <button type="button" class="btn btn-danger" id="professional-delete-btn">Delete</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+<!-- user info modal -->
+<div class="modal fade" id="user-info-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">User Info</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="user-info-modal-close-btn"></button>
+          </div>
+          <div class="modal-body d-flex gap-4">
+            <div class="item-icon align-self-start item-info-icon">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div id="user-info-modal-body"></div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- user delete modal -->
+<div class="modal fade" id="user-delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete User</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="user-delete-modal-close-btn"></button>
+          </div>
+          <div class="modal-body" id="user-delete-modal-body"></div>
+          <div class="modal-footer" id="user-delete-modal-footer">
+              <button type="button" class="btn btn-dark" id="user-block-btn">Block</button>
+              <button type="button" class="btn btn-danger" id="user-delete-btn">Delete</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  window.services = {{ services|tojson }}
+  window.professionals = {{ professionals|tojson }}
+  window.users = {{ users|tojson }}
+</script>

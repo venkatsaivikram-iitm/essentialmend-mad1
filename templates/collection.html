@@ -1,0 +1,129 @@
+<section class="d-flex justify-content-between align-items-center">
+    <h2 class="fs-1 m-0">COLLECTION</h2>
+    <div class="input-group mr-sm-2" id="book-search-wrapper">
+        <div class="input-group-prepend">
+            <div class="input-group-text">
+                <i class="bi bi-search"></i>
+            </div>
+        </div>
+        <input type="text" class="form-control" id="book-search-input" placeholder="Search your collection">
+    </div>
+</section>
+<hr />
+<section class="collection-main-wrapper">
+    <div id="granted-books-wrapper" class="collection-books-wrapper">
+        <h3>Granted Books</h3>
+        {% if collection.granted_books and collection.granted_books|length > 0 %}
+            {% for book in collection.granted_books %}
+                <div class="collection-book-item" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#info-modal">
+                    <div class="book-item-icon-wrapper">
+                        <i class="bi bi-book-half book-item-icon"></i>
+                        <button type="button" class="btn book-info-btn btn-dark" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#info-modal">
+                            <i class="bi bi-info-circle"></i>
+                        </button>
+                    </div>
+                    <hr style="width:100%;margin:0;border-color:black" />
+                    <div class="book-item-info-wrapper">
+                        <h4>{{book.file_name}}</h4>
+                        <p>{{book.uploaded_on_str}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No granted books in your collection</p>
+        {% endif %}
+    </div>
+    <hr />
+    <div id="requested-books-wrapper" class="collection-books-wrapper">
+        <h3>Requested Books</h3>
+        {% if collection.requested_books and collection.requested_books|length > 0 %}
+            {% for book in collection.requested_books %}
+                <div class="collection-book-item" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#info-modal">
+                    <div class="book-item-icon-wrapper">
+                        <i class="bi bi-book-half book-item-icon"></i>
+                        <button type="button" class="btn book-info-btn btn-dark" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#info-modal">
+                            <i class="bi bi-info-circle"></i>
+                        </button>
+                    </div>
+                    <hr style="width:100%;margin:0;border-color:black" />
+                    <div class="book-item-info-wrapper">
+                        <h4>{{book.file_name}}</h4>
+                        <p>{{book.uploaded_on_str}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No books have been requested at the moment</p>
+        {% endif %}
+    </div>
+    <hr />
+    <div id="wishlist-wrapper" class="collection-books-wrapper">
+        <h3>WishList</h3>
+        {% if collection.wishlist and collection.wishlist|length > 0 %}
+            {% for book in collection.wishlist %}
+                <div class="collection-book-item" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#info-modal">
+                    <div class="book-item-icon-wrapper">
+                        <i class="bi bi-book-half book-item-icon"></i>
+                        <button type="button" class="btn book-info-btn btn-dark" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#info-modal">
+                            <i class="bi bi-info-circle"></i>
+                        </button>
+                    </div>
+                    <hr style="width:100%;margin:0;border-color:black" />
+                    <div class="book-item-info-wrapper">
+                        <h4>{{book.file_name}}</h4>
+                        <p>{{book.uploaded_on_str}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No books in your wishlist</p>
+        {% endif %}
+    </div>
+</section>
+<div class="modal fade" id="info-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Book Info</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="info-modal-close-btn"></button>
+            </div>
+            <div class="modal-body" id="info-modal-body"></div>
+            <div class="modal-footer info-modal-footer" id="info-modal-footer">
+                <div>
+                    <button type="button" class="btn btn-dark" id="book-read-btn">
+                        <i class="bi bi-book"></i>
+                        <span>Read</span>
+                    </button>
+                    <button type="button" class="btn btn-dark" id="book-review-btn" data-bs-toggle="modal" data-bs-target="#review-modal">
+                        <i class="bi bi-pencil-square"></i>
+                        <span>Review</span>
+                    </button>
+                </div>
+                <button type="button" class="btn btn-dark" id="book-return-btn">
+                    <i class="bi bi-arrow-90deg-right"></i>
+                    <span>Return Book</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="review-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Book Review</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="review-modal-close-btn"></button>
+            </div>
+            <div class="modal-body">
+                <p id="review-modal-body-content"></p>
+                <textarea id="book-review-content" class="form-control" autofocus rows="5" placeholder="review here..." maxlength="250"></textarea>
+            </div>
+            <div class="modal-footer" id="info-modal-footer">
+                <button type="button" class="btn btn-dark" id="book-review-submit-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.collection = {{ collection|tojson }} 
+</script>

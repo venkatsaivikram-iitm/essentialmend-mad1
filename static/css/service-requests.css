@@ -1,0 +1,14 @@
+.service-request-item {
+    background-color: #DDD;
+}
+
+.item-icon {
+    font-size: 3rem;
+}
+
+.item-info-icon {
+    font-size: 7rem;
+    border: 1px solid black;
+    padding-inline: 1rem;
+    border-radius: 1rem;
+}

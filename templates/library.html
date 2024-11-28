@@ -1,0 +1,59 @@
+<section class="d-flex justify-content-between align-items-center">
+    <h2 class="fs-1 m-0">LIBRARY</h2>
+    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#upload-modal" id="upload-books-btn">Upload Books</button>
+</section>
+<hr />
+<section class="library-main-wrapper">
+    <div id="library-books-wrapper">
+        {% for book in library %}
+            <div class="library-book-item" data-fid="{{book.file_id}}">
+                <div class="book-item-icon-wrapper">
+                    <i class="bi bi-book-half book-item-icon"></i>
+                    <button type="button" class="btn btn-danger book-delete-btn" data-fid="{{book.file_id}}" data-bs-toggle="modal" data-bs-target="#delete-modal" >
+                        <i class="bi bi-trash3-fill"></i>
+                    </button>
+                </div>
+                <hr style="width:100%;margin:0;border-color:black" />
+                <div class="book-item-info-wrapper">
+                    <h4>{{book.file_name}}</h4>
+                    <p>{{book.uploaded_on_str}}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+<div class="modal fade" id="upload-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Upload Books to Library</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="upload-modal-close-btn"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="file" class="form-control" name="upload-files" id="upload-file-input" placeholder="Select books to upload" accept="application/pdf"  aria-label="Upload">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" id="upload-btn">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete book from library</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="delete-modal-close-btn"></button>
+            </div>
+            <div class="modal-body" id="delete-modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" id="delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.library = {{ library|tojson }} 
+</script>

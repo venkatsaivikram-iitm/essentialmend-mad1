@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+
+    {% block stylesheets %}
+        {{ super() }}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
+    {% endblock stylesheets %}
+
+    {% block scripts %}
+        {{ super() }}
+    {% endblock scripts %}
+{% endblock head %}
+
+{% block body %}
+    <main class="landing-main">
+        <h1 class="landing-header d-flex align-items-center gap-4">
+            <img class="bookshelf-logo" width="64px" height="64px" src="{{ url_for('static', filename='assets/essential-mend-dark.svg') }}" />
+            <span>EssentialMend</span>
+        </h1>
+        <h2 class="landing-header-description">Fulfill your <span>NEEDS</span> with just a few <span>CLICKS</span> digitally!</h2>
+        <a href="/register" id="register-btn">Explore Services</a>
+    </main>
+{% endblock body %}

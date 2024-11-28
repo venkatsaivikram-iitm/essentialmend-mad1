@@ -1,0 +1,15 @@
+<section style="height:100%;display:flex;flex-direction:column;">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 style="font-size:1.5rem;">
+            {{book.file_name}}
+            <small style="font-size:1rem;">({{(book.file_size / 1024 / 1024) | round | int}} mb)</small>
+        </h1>
+        <h6>Uploaded on: {{book.uploaded_on_str}}</h6>
+    </div>
+    <hr style="margin-top: 0;" />
+    <iframe id="book-viewer" type="application/pdf" height="500px" width="500px"></iframe>
+</section>
+<div style="position:absolute;top:50%;left:50%;translate:-50% -50%" class="spinner-border" id="book-loader" role="status"></div>
+<script>
+    window.book = {{ book|tojson }}
+</script>

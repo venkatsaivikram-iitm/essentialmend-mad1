@@ -1,0 +1,73 @@
+.main-wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    gap: 0.25rem;
+}
+
+.lhs-bar-wrapper {
+    min-width: 250px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* margin: 0.5rem 0.25rem 0.5rem 0.5rem; */
+    padding: 0.5rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    background-color: white;
+}
+
+.content-wrapper {
+    flex-grow: 1;
+    height: 100vh;
+    /* margin: 0.5rem 0.5rem 0.5rem 0.25rem; */
+    border-radius: 0.5rem 0 0 0.5rem;
+    padding: 0.5rem;
+    background-color: white;
+    overflow: auto;
+}
+
+.lhs-bar-top-items-wrapper, .lhs-bar-bottom-items-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lhs-bar-item {
+    border: 2px solid black;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    cursor: pointer;
+}
+
+#bookshelf-logo {
+    background-color: black;
+}
+
+#bookshelf-logo img {
+    width: 32px;
+}
+
+#logo path {
+    fill: blue;
+}
+
+.lhs-bar-item img {
+    width: 28px !important;
+    fill: red;
+}
+
+.lhs-bar-item--selected {
+    background-color: black;
+}
+
+.line-separator {
+    width: 100%;
+    height: 2.5px;
+    background-color: black;
+}

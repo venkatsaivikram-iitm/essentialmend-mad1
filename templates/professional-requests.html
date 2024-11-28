@@ -1,0 +1,180 @@
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active text-black" id="nav-all-professional-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-all-professional-requests-panel" type="button" role="tab" aria-controls="nav-all-professional-requests-panel" aria-selected="true">All Requests</button>
+    <button class="nav-link text-black" id="nav-pending-professional-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-pending-professional-requests-panel" type="button" role="tab" aria-controls="nav-pending-professional-requests-panel" aria-selected="false">Pending</button>
+    <button class="nav-link text-black" id="nav-declined-professional-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-declined-professional-requests-panel" type="button" role="tab" aria-controls="nav-declined-professional-requests-panel" aria-selected="false">Declined</button>
+    <button class="nav-link text-black" id="nav-approved-professional-requests-tab" data-bs-toggle="tab" data-bs-target="#nav-approved-professional-requests-panel" type="button" role="tab" aria-controls="nav-approved-professional-requests-panel" aria-selected="false">Approved</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-all-professional-requests-panel" role="tabpanel" aria-labelledby="nav-all-professional-requests-tab">
+    <div class="p-2 d-flex flex-column h-100 overflow-hidden">
+      <div class="d-flex flex-grow-1 flex-column gap-2 h-100 overflow-auto">
+        {% for professional in professionals %}
+          <div class="d-flex gap-4 px-4 rounded pt-2 pb-2 professional-item" data-action="info" data-type="professional" data-value="{{professional.name}},{{professional.email}}" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-info-modal">
+              <div class="item-icon">
+                <i class="bi bi-person-fill-gear service-item-icon"></i>
+              </div>
+              <div class="d-flex flex-grow-1 flex-column">
+                <h4>{{professional.name}} | {{professional.email}} | <span class="fw-normal">{{professional.professionalRequest.status}}</span></h4>
+                <p class="text-truncate m-0"><span class="fw-bold">Service: </span>{{professional.service.name}} | <span class="fw-bold">Description: </span> {{professional.description}}</p>
+                <p class="m-0"><span class="fw-bold">Location: </span>{{professional.location}} | <span class="fw-bold">Pincode: </span>{{professional.pincode}}</p>
+                <p class="fs-6 m-0"><span class="fw-bold">Rating: </span>{{professional.rating or 0}} &#9733; | <span class="fw-bold">Duration: </span>{{professional.duration}} Hrs | <span class="fw-bold">Price: </span>{{professional.price}} Rs</p>
+              </div>
+              <div class="align-self-center">
+                {% if professional.isPending %}
+                  <button class="btn btn-dark professional-review-btn" data-uid="{{professional.uid}}" data-type="professional" data-action="review" data-bs-toggle="modal" data-bs-target="#professional-review-modal">
+                    <i class="bi bi-person-fill-check"></i>
+                    Review Request
+                  </button>
+                {% endif %}
+                <button class="fs-5 btn btn-danger professional-delete-modal-btn" data-action="delete" data-type="professional" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-delete-modal">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+          </div>
+        {% endfor %}
+        {% if not professionals | hasProfessionals("all") %}
+          <p class="text-center">No professional requests yet!</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-pending-professional-requests-panel" role="tabpanel" aria-labelledby="nav-pending-professional-requests-tab">
+    <div class="p-2 d-flex flex-column h-100 overflow-hidden">
+      <div class="d-flex flex-grow-1 flex-column gap-2 h-100 overflow-auto">
+        {% for professional in professionals %}
+          {% if professional.isPending %}
+            <div class="d-flex gap-4 px-4 rounded pt-2 pb-2 professional-item" data-action="info" data-type="professional" data-value="{{professional.name}},{{professional.email}}" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-info-modal">
+                <div class="item-icon">
+                  <i class="bi bi-person-fill-gear service-item-icon"></i>
+                </div>
+                <div class="d-flex flex-grow-1 flex-column">
+                  <h4>{{professional.name}} | {{professional.email}} | <span class="fw-normal">{{professional.professionalRequest.status}}</span></h4>
+                  <p class="text-truncate m-0"><span class="fw-bold">Service: </span>{{professional.service.name}} | <span class="fw-bold">Description: </span> {{professional.description}}</p>
+                  <p class="m-0"><span class="fw-bold">Location: </span>{{professional.location}} | <span class="fw-bold">Pincode: </span>{{professional.pincode}}</p>
+                  <p class="fs-6 m-0"><span class="fw-bold">Rating: </span>{{professional.rating or 0}} &#9733; | <span class="fw-bold">Duration: </span>{{professional.duration}} Hrs | <span class="fw-bold">Price: </span>{{professional.price}} Rs</p>
+                </div>
+                <div class="align-self-center">
+                  <button class="btn btn-dark professional-review-btn" data-uid="{{professional.uid}}" data-type="professional" data-action="review" data-bs-toggle="modal" data-bs-target="#professional-review-modal">
+                    <i class="bi bi-person-fill-check"></i>
+                    Review Request
+                  </button>
+                  <button class="fs-5 btn btn-danger professional-delete-modal-btn" data-action="delete" data-type="professional" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-delete-modal">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        {% if not professionals | hasProfessionals("isPending") %}
+          <p class="text-center">No professional requests are in pending status</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-declined-professional-requests-panel" role="tabpanel" aria-labelledby="nav-declined-professional-requests-tab">
+    <div class="p-2 d-flex flex-column h-100 overflow-hidden">
+      <div class="d-flex flex-grow-1 flex-column gap-2 h-100 overflow-auto">
+        {% set hasItems = false %}
+        {% for professional in professionals %}
+          {% if professional.isDeclined %}
+            {% set hasItems = true %}
+            <div class="d-flex gap-4 px-4 rounded pt-2 pb-2 professional-item" data-action="info" data-type="professional" data-value="{{professional.name}},{{professional.email}}" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-info-modal">
+                <div class="item-icon">
+                  <i class="bi bi-person-fill-gear service-item-icon"></i>
+                </div>
+                <div class="d-flex flex-grow-1 flex-column">
+                  <h4>{{professional.name}} | {{professional.email}} | <span class="fw-normal">{{professional.professionalRequest.status}}</span></h4>
+                  <p class="text-truncate m-0"><span class="fw-bold">Service: </span>{{professional.service.name}} | <span class="fw-bold">Description: </span> {{professional.description}}</p>
+                  <p class="m-0"><span class="fw-bold">Location: </span>{{professional.location}} | <span class="fw-bold">Pincode: </span>{{professional.pincode}}</p>
+                  <p class="fs-6 m-0"><span class="fw-bold">Rating: </span>{{professional.rating or 0}} &#9733; | <span class="fw-bold">Duration: </span>{{professional.duration}} Hrs | <span class="fw-bold">Price: </span>{{professional.price}} Rs</p>
+                </div>
+                <div class="align-self-center">
+                  <button class="fs-5 btn btn-danger professional-delete-modal-btn" data-action="delete" data-type="professional" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-delete-modal">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+            </div>
+          {% else %}
+          {% endif %}
+        {% endfor %}
+        {% if not professionals | hasProfessionals("isDeclined") %}
+          <p class="text-center">No professional requests are in declined status</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-approved-professional-requests-panel" role="tabpanel" aria-labelledby="nav-approved-professional-requests-tab">
+    <div class="p-2 d-flex flex-column h-100 overflow-hidden">
+      <div class="d-flex flex-grow-1 flex-column gap-2 h-100 overflow-auto">
+        {% set hasItems = false %}
+        {% for professional in professionals %}
+          {% if professional.isApproved %}
+            {% set hasItems = true %}
+            <div class="d-flex gap-4 px-4 rounded pt-2 pb-2 professional-item" data-action="info" data-type="professional" data-value="{{professional.name}},{{professional.email}}" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-info-modal">
+                <div class="item-icon">
+                  <i class="bi bi-person-fill-gear service-item-icon"></i>
+                </div>
+                <div class="d-flex flex-grow-1 flex-column">
+                  <h4>{{professional.name}} | {{professional.email}} | <span class="fw-normal">{{professional.professionalRequest.status}}</span></h4>
+                  <p class="text-truncate m-0"><span class="fw-bold">Service: </span>{{professional.service.name}} | <span class="fw-bold">Description: </span> {{professional.description}}</p>
+                  <p class="m-0"><span class="fw-bold">Location: </span>{{professional.location}} | <span class="fw-bold">Pincode: </span>{{professional.pincode}}</p>
+                  <p class="fs-6 m-0"><span class="fw-bold">Rating: </span>{{professional.rating or 0}} &#9733; | <span class="fw-bold">Duration: </span>{{professional.duration}} Hrs | <span class="fw-bold">Price: </span>{{professional.price}} Rs</p>
+                </div>
+                <div class="align-self-center">
+                  <button class="fs-5 btn btn-danger professional-delete-modal-btn" data-action="delete" data-type="professional" data-uid="{{professional.uid}}" data-bs-toggle="modal" data-bs-target="#professional-delete-modal">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+            </div>
+          {% else %}
+          {% endif %}
+        {% endfor %}
+        {% if not professionals | hasProfessionals("isApproved") %}
+          <p class="text-center">No professional requests are in approved status</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- professional info modal -->
+<div class="modal fade" id="professional-info-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Professional Info</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="professional-info-modal-close-btn"></button>
+          </div>
+          <div class="modal-body d-flex gap-4">
+            <div class="item-icon align-self-start item-info-icon">
+              <i class="bi bi-person-fill-gear"></i>
+            </div>
+            <div id="professional-info-modal-body"></div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- professional delete modal -->
+<div class="modal fade" id="professional-delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Professional</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="professional-delete-modal-close-btn"></button>
+          </div>
+          <div class="modal-body" id="professional-delete-modal-body"></div>
+          <div class="modal-footer" id="professional-delete-modal-footer">
+            <button type="button" class="btn btn-dark" id="professional-block-btn">Block</button>
+              <button type="button" class="btn btn-danger" id="professional-delete-btn">Delete</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  window.professionals = {{ professionals|tojson }}
+</script>

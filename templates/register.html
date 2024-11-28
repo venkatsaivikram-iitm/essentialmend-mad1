@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+
+    {% block stylesheets %}
+        {{ super() }}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}"/>
+    {% endblock stylesheets %}
+
+    {% block scripts %}
+        {{ super() }}
+        <script src="{{ url_for('static', filename='js/register.js') }}" type="module" defer></script>
+    {% endblock scripts %}
+{% endblock head %}
+
+{% block body %}
+    <main class="register-main">
+        <header class="register-header">
+            <h1 class="d-flex align-items-center gap-2">
+                <img class="bookshelf-logo" width="32px" height="32px" src="{{ url_for('static', filename='assets/essential-mend-dark.svg') }}" />
+                <span>EssentialMend</span>
+            </h1>
+        </header>
+        <article class="register-form-container">
+            <h2 id="register-type-text">Sign In Now</h2>
+            <section class="register-form" id="register-form">
+                <input class="register-input form-control" id="email" type="text" name="email" placeholder="Email" required />
+                <div class="position-relative">
+                    <input class="register-input form-control" id="password" type="password" name="password" placeholder="Password" required />
+                    <i class="bi bi-eye-slash-fill position-absolute top-50 end-0 translate-middle cursor-pointer" id="toggle-password-btn"></i>
+                </div>
+            </section>
+            <section>
+                <button id="register-btn" class="btn btn-dark" data-type="signin">Sign In</button>
+            </section>
+            <section>
+                <button id="register-switch-btn" class="btn btn-dark" data-type="signin">New User? Sign Up</button>
+            </section>
+        </article>
+    </main>
+    <script>
+        window.services = {{ services|tojson }}
+    </script>
+{% endblock body %}
